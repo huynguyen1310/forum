@@ -5,10 +5,10 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">Forum Threads</div>
-
+                    <div class="card-header">Forum Threads</div>
+                
                 <div class="card-body">
-                    @foreach ($threads as $thread)
+                    @forelse ($threads as $thread)
                         <article>
                             <div class="level">
                                     <h3 class="flex">
@@ -21,7 +21,9 @@
                             <div class="body">{{ $thread->body }}</div>
                         </article>
                         <hr>
-                    @endforeach
+                    @empty
+                        <p>There are no relevent result at this time</p>
+                    @endforelse
                 </div>
             </div>
         </div>
