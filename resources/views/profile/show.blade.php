@@ -6,28 +6,16 @@
         <div class="col-md-8 offset-2">
             <div class="page-header">
                 <h1>{{ $profileUser->name }}</h1>
-                Since <small>{{ $profileUser->created_at->diffForHumans() }}</small>
             </div>
-            @foreach ($threads as $thread)
-            <div class="card mt-4">
-                <div class="card-header">
-                    <div class="level">
-                        <div class="flex">
-                            <a href="{{ $thread->path() }}">{{ $thread->title }}</a> | Posted : 
-                            <span>{{ $thread->created_at->diffForHumans() }}</span>
-                        </div> 
-                    </div>
-
-                </div>
-                <div class="card-body">
-                    <article>
-                        <div class="body">{{ $thread->body }}</div>
-                    </article>
-                </div>
-            </div>
+            @foreach ($activities as $date => $activity)
+                <h3 class="page-header mt-2">{{$date}}</h3>
+                @foreach ($activity as $record)
+                    @if (view()->exists("profile.activities.{$record->type}"))
+                        @include("profile.activities.{$record->type}" , ['activity' => $record]) {{-- overdrive record with activity  --}}
+                    @endif
+                @endforeach
+                
             @endforeach
-            <br>
-            {{ $threads->links() }}
         </div>
     </div>
 

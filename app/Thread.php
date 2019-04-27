@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Thread extends Model
 {
+    use RecordActivity;
+
     protected $guarded = [];
 
     protected $with = ['creator','channel'];
@@ -15,6 +17,10 @@ class Thread extends Model
 
         static::addGlobalScope('replyCount' , function ($builder){
             $builder->withCount('replies');
+        });
+
+        static::deleting(function ($thread){
+            $thread->replies->each->delete();
         });
     }
 
