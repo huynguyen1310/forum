@@ -12,13 +12,25 @@ class ReplyController extends Controller
         $this->middleware('auth');
     }
 
+    public function index($channelId , Thread $thread) {
+        return $thread->replies()->paginate(20);
+    }
+
     public function store($channelId ,Thread $thread) {
-        $thread->addReply([
+        $this->validate(request(),[
+            'body' => 'required'
+        ]);
+        
+        $reply = $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id()
         ]);
+
+        if(request()->expectsJson()) {
+            return $reply->load('owner');
+        }
         
-        return back();
+        return back()->with('flash','Your reply has been left');
     }
 
     public function update(Reply $reply) {
