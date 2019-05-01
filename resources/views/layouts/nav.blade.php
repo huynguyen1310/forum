@@ -20,6 +20,7 @@
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <a href="/threads" class="dropdown-item">All Threads</a>
                             <a href="/threads?popular=1" class="dropdown-item">Popular Threads All Time</a>
+                            <a href="/threads?unanswered=1" class="dropdown-item">Unanswered Threads</a>
                             @if (auth()->check())
                             <a href="/threads?by={{ auth()->user()->name }}" class="dropdown-item">My Threads</a>
                             @endif
@@ -59,6 +60,9 @@
                 </li>
                 @endif
                 @else
+                
+                <user-notifications></user-notifications>
+
                 <li class="nav-item dropdown">
                     <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
