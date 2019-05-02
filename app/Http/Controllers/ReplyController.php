@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Thread;
 use App\Reply;
+use App\Inspections\Spam;
 
 class ReplyController extends Controller
 {
@@ -16,10 +17,12 @@ class ReplyController extends Controller
         return $thread->replies()->paginate(20);
     }
 
-    public function store($channelId ,Thread $thread) {
+    public function store($channelId ,Thread $thread , Spam $spam) {
         $this->validate(request(),[
             'body' => 'required'
         ]);
+
+        $spam->detect(request('body'));
         
         $reply = $thread->addReply([
             'body' => request('body'),
@@ -33,8 +36,13 @@ class ReplyController extends Controller
         return back()->with('flash','Your reply has been left');
     }
 
-    public function update(Reply $reply) {
+    public function update(Reply $reply , Spam $spam) {
+
         $this->authorize('update',$reply);
+
+        $this->validate(request(),['body' => 'required']);
+        
+        $spam->detect(request('body'));
 
         $reply->update(request(['body']));
     }

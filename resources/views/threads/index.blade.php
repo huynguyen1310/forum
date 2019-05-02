@@ -12,7 +12,15 @@
                         <article>
                             <div class="level">
                                     <h3 class="flex">
-                                        <a href="{{ $thread->path() }}">{{ $thread->title }}</a>
+                                        <a href="{{ $thread->path() }}">
+                                            @if (auth()->check() && $thread->hasUpdatedFor(auth()->user()))
+                                                <strong>
+                                                    {{ $thread->title }}
+                                                </strong>
+                                            @else
+                                                {{ $thread->title }}
+                                            @endif                                         
+                                        </a>
                                     </h3>
 
                                     <a href="{{ $thread->path() }}">{{ $thread->replies_count }} {{ str_plural('reply',$thread->replies_count) }}</a>
