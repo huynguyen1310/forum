@@ -6,55 +6,61 @@ use Illuminate\Http\Request;
 use App\Thread;
 use App\Reply;
 use App\Inspections\Spam;
+use Illuminate\Auth\Access\Gate;
 
 class ReplyController extends Controller
 {
-    function __constructor() {
+    function __constructor()
+    {
         $this->middleware('auth');
     }
 
-    public function index($channelId , Thread $thread) {
+    public function index($channelId, Thread $thread)
+    {
         return $thread->replies()->paginate(20);
     }
 
-    public function store($channelId ,Thread $thread , Spam $spam) {
-        $this->validate(request(),[
-            'body' => 'required'
-        ]);
+    public function store($channelId, Thread $thread, Spam $spam)
+    {
 
-        $spam->detect(request('body'));
-        
-        $reply = $thread->addReply([
-            'body' => request('body'),
-            'user_id' => auth()->id()
-        ]);
+        try {
+            request()->validate(['body' => 'required|spamfree']);
 
-        if(request()->expectsJson()) {
-            return $reply->load('owner');
+            $reply = $thread->addReply([
+                'body' => request('body'),
+                'user_id' => auth()->id()
+            ]);
+        } catch (\Exception $e) {
+            return response("your reply could not be saved at this time", 422);
         }
-        
-        return back()->with('flash','Your reply has been left');
+
+
+        return $reply->load('owner');
     }
 
-    public function update(Reply $reply , Spam $spam) {
+    public function update(Reply $reply, Spam $spam)
+    {
 
-        $this->authorize('update',$reply);
+        $this->authorize('update', $reply);
 
-        $this->validate(request(),['body' => 'required']);
-        
-        $spam->detect(request('body'));
+        try {
+            request()->validate(['body' => 'required|spamfree']);
 
-        $reply->update(request(['body']));
+            $reply->update(request(['body'])); //code...
+        } catch (\Exception $e) {
+            return response("your reply could not be saved at this time", 422);
+        }
     }
 
-    public function destroy(Reply $reply) {
+    public function destroy(Reply $reply)
+    {
 
-        $this->authorize('update',$reply);
+        $this->authorize('update', $reply);
 
         $reply->delete();
 
-        if(request()->expectsJson()){
-            return response(['status'=>'Reply deleted']);
+        if (request()->expectsJson()) {
+            return response(['status' => 'Reply deleted']);
         }
 
         return back();
