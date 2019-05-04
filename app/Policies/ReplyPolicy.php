@@ -29,6 +29,6 @@ class ReplyPolicy
 
         if(!$lastReply) return true;
 
-        dd($lastReply->wasJustPublished());
+        return ! $lastReply->wasJustPublished();
     } 
 }

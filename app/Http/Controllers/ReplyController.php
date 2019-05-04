@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Thread;
 use App\Reply;
-use App\Inspections\Spam;
 use Illuminate\Auth\Access\Gate;
 
 class ReplyController extends Controller
@@ -20,10 +19,16 @@ class ReplyController extends Controller
         return $thread->replies()->paginate(20);
     }
 
-    public function store($channelId, Thread $thread, Spam $spam)
+    public function store($channelId, Thread $thread)
     {
 
         try {
+            $this->authorize('create', new Reply);
+
+            // if(Gate::denies('create', new Reply)) {
+            //     return response('spam',422);
+            // }
+
             request()->validate(['body' => 'required|spamfree']);
 
             $reply = $thread->addReply([
@@ -38,7 +43,7 @@ class ReplyController extends Controller
         return $reply->load('owner');
     }
 
-    public function update(Reply $reply, Spam $spam)
+    public function update(Reply $reply)
     {
 
         $this->authorize('update', $reply);
