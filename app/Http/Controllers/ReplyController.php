@@ -5,8 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Thread;
 use App\Reply;
-use Illuminate\Auth\Access\Gate;
-
+use Illuminate\Support\Facades\Gate;
 class ReplyController extends Controller
 {
     function __constructor()
@@ -21,14 +20,13 @@ class ReplyController extends Controller
 
     public function store($channelId, Thread $thread)
     {
+        if(Gate::denies('create', new Reply)) {
+            return response(
+                'You are posting too frequently. Please take a break. :)', 429
+            );
+        }
 
         try {
-            $this->authorize('create', new Reply);
-
-            // if(Gate::denies('create', new Reply)) {
-            //     return response('spam',422);
-            // }
-
             request()->validate(['body' => 'required|spamfree']);
 
             $reply = $thread->addReply([
