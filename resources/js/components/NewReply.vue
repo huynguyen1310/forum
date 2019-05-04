@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="form-group mt-4" v-if="signedIn">
-            <textarea name="body" id="" class="form-control" placeholder="Have somethin to say ?" required v-model="body"></textarea>
+            <textarea name="body" id="body" class="form-control" placeholder="Have somethin to say ?" required v-model="body"></textarea>
             <button class="btn btn-success mt-2" @click="addReply">Post</button>
         </div>
         
@@ -11,11 +11,30 @@
 </template>
 
 <script>
+import "at.js";
+import "jquery.caret";
+
 export default {
     data() {
         return {
             body : '',
         }
+    },
+    mounted() {
+        $('#body').atwho({
+            at : "@",
+            delay : 750,
+            callbacks : {
+                remoteFilter : function (query , callback) {
+                    console.log('called');
+                    $.getJSON("/api/users", { name : query },
+                        function (usernames) {
+                            callback(usernames);
+                        }
+                    );
+                }
+            }
+        })
     },
     methods : {
         addReply() {

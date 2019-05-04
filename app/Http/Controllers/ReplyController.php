@@ -7,6 +7,8 @@ use App\Thread;
 use App\Reply;
 use Illuminate\Support\Facades\Gate;
 use App\Http\Requests\CreatePostRequest;
+use App\Notifications\YouWereMentioned;
+use App\User;
 
 class ReplyController extends Controller
 {
@@ -22,12 +24,11 @@ class ReplyController extends Controller
 
     public function store($channelId, Thread $thread , CreatePostRequest $form)
     {   
-        $reply = $thread->addReply([
+        return $thread->addReply([
             'body' => request('body'),
             'user_id' => auth()->id()
-        ]);
+        ])->load('owner');
         
-        return $reply->load('owner');
     }
 
     public function update(Reply $reply)
@@ -35,13 +36,11 @@ class ReplyController extends Controller
 
         $this->authorize('update', $reply);
 
-        try {
-            request()->validate(['body' => 'required|spamfree']);
+        
+        request()->validate(['body' => 'required|spamfree']);
 
-            $reply->update(request(['body'])); //code...
-        } catch (\Exception $e) {
-            return response("your reply could not be saved at this time", 422);
-        }
+        $reply->update(request(['body'])); //code...
+        
     }
 
     public function destroy(Reply $reply)

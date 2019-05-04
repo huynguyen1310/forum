@@ -14,14 +14,16 @@
         </div>
         <div class="card-body">
             <div v-if="editing">
-                <div class="form-group">
-                    <textarea name="body" id="" class="form-control" v-model="body"></textarea>
+                <form @submit="update">
+                    <div class="form-group">
+                        <textarea name="body" id="" class="form-control" v-model="body" required></textarea>
 
-                    <button class="btn btn-sm btn-link" @click="update">Update</button>
-                    <button class="btn btn-sm btn-link" @click="editing = false">Cancel</button>
-                </div>
+                        <button class="btn btn-sm btn-link">Update</button>
+                        <button class="btn btn-sm btn-link" @click="editing = false" type="button">Cancel</button>
+                    </div>
+                </form>
             </div>
-            <div v-else v-text="body"></div>
+            <div v-else v-html="body"></div>
         </div>
 
             <div class="card-footer level" v-if="canUpdate">

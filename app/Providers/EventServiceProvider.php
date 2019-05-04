@@ -23,6 +23,12 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\NotifyThreadSubscribers',
             
         ],
+
+        'App\Events\ThreadRecivedNewReply' => [
+            'App\Listeners\NotifyMentionedUsers',
+            'App\Listeners\NotifySubscribers'
+            
+        ],
     ];
 
     /**
