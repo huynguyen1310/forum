@@ -62,4 +62,8 @@ class User extends Authenticatable
     public function read($thread) {
         cache()->forever(auth()->user()->visitedCacheKey($thread),Carbon::now());
     }
+
+    public function avatar() {
+        return $this->avatar_path ?: 'avatars/default.png';
+    }
 }
