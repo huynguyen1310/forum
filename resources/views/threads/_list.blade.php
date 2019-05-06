@@ -19,6 +19,10 @@
             <a href="{{ $thread->path() }}">{{ $thread->replies_count }} {{ str_plural('reply',$thread->replies_count) }}</a>
         </div>
         <div class="card-body">{{ $thread->body }}</div>
+
+        <div class="card-header">
+            {{ $thread->visits()->count() }} Visits
+        </div>
     </div>
 @empty
     <p>There are no relevent result at this time</p>
