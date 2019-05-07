@@ -27,7 +27,7 @@ Route::post('/threads','ThreadController@store')->middleware('must-be-confirmed'
 Route::get('/threads/{channel}','ThreadController@index');
 Route::get('/threads/{channel}/{thread}/replies','ReplyController@index');
 Route::post('/threads/{channel}/{thread}/replies','ReplyController@store');
-Route::delete('/replies/{reply}','ReplyController@destroy');
+Route::delete('/replies/{reply}','ReplyController@destroy')->name('replies.destroy');
 Route::patch('/replies/{reply}','ReplyController@update');
 
 Route::post('/replies/{reply}/best','BestRepliesController@store')->name('best-replies.store');

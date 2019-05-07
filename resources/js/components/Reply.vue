@@ -52,7 +52,7 @@ export default {
             editing : false,
             id : this.data.id,
             body : this.data.body,
-            isBest : false,
+            isBest : this.data.isBest,
             reply : this.data,
         }
     },
@@ -63,6 +63,11 @@ export default {
         classes() {
             return ['fa-star mr-1 ml-auto', this.isBest ? 'fas text-success' : 'far']
         },
+    },
+    created() {
+        window.events.$on('best-reply-selected' , id =>{
+            this.isBest = (this.id === id);
+        });
     },
     methods : {
         update() {
@@ -80,7 +85,9 @@ export default {
             
         },
         markBestReply() {
-            this.isBest = !this.isBest;
+            axios.post('/replies/' + this.data.id + '/best');
+
+            window.events.$emit('best-reply-selected' , this.id);
         }
 
     }
