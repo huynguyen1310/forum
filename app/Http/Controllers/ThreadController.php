@@ -65,6 +65,9 @@ class ThreadController extends Controller
             'body' => request('body'),
         ]);
         
+        if(request()->wantsJson()) {
+            return response($thread,201);
+        }
 
 
         return redirect($thread->path())
