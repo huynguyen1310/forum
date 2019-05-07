@@ -3249,11 +3249,6 @@ __webpack_require__.r(__webpack_exports__);
         _this.$emit('created', data);
       });
     }
-  },
-  computed: {
-    signedIn: function signedIn() {
-      return window.App.signedIn;
-    }
   }
 });
 
@@ -3434,6 +3429,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -3445,22 +3445,17 @@ __webpack_require__.r(__webpack_exports__);
     return {
       editing: false,
       id: this.data.id,
-      body: this.data.body
+      body: this.data.body,
+      isBest: false,
+      reply: this.data
     };
   },
   computed: {
     ago: function ago() {
       return moment__WEBPACK_IMPORTED_MODULE_1___default()(this.data.created_at).fromNow();
     },
-    singedIn: function singedIn() {
-      return window.App.signedIn;
-    },
-    canUpdate: function canUpdate() {
-      var _this = this;
-
-      return this.authorize(function (user) {
-        return _this.data.user_id == user.id;
-      }); // return this.data.user_id == window.App.user.id;
+    classes: function classes() {
+      return ['fa-star mr-1 ml-auto', this.isBest ? 'fas text-success' : 'far'];
     }
   },
   methods: {
@@ -3475,6 +3470,9 @@ __webpack_require__.r(__webpack_exports__);
     destroy: function destroy() {
       axios["delete"]('/replies/' + this.data.id);
       this.$emit('deleted', this.data.id);
+    },
+    markBestReply: function markBestReply() {
+      this.isBest = !this.isBest;
     }
   }
 });
@@ -57949,7 +57947,7 @@ var render = function() {
             _c("span", { domProps: { textContent: _vm._s(_vm.ago) } })
           ]),
           _vm._v(" "),
-          _vm.singedIn
+          _vm.signedIn
             ? _c("div", [_c("favorite", { attrs: { reply: _vm.data } })], 1)
             : _vm._e()
         ])
@@ -58006,31 +58004,39 @@ var render = function() {
         : _c("div", { domProps: { innerHTML: _vm._s(_vm.body) } })
     ]),
     _vm._v(" "),
-    _vm.canUpdate
-      ? _c("div", { staticClass: "card-footer level" }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary btn-sm mr-1",
-              on: {
-                click: function($event) {
-                  _vm.editing = true
+    _c("div", { staticClass: "card-footer level" }, [
+      _vm.authorize("updateReply", _vm.reply)
+        ? _c("div", [
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary btn-sm mr-1",
+                on: {
+                  click: function($event) {
+                    _vm.editing = true
+                  }
                 }
-              }
-            },
-            [_vm._v("Edit")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-danger btn-sm mr-1",
-              on: { click: _vm.destroy }
-            },
-            [_vm._v("Delete")]
-          )
-        ])
-      : _vm._e()
+              },
+              [_vm._v("Edit")]
+            ),
+            _vm._v(" "),
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-danger btn-sm mr-1",
+                on: { click: _vm.destroy }
+              },
+              [_vm._v("Delete")]
+            )
+          ])
+        : _vm._e(),
+      _vm._v(" "),
+      _c("i", {
+        class: _vm.classes,
+        staticStyle: { cursor: "pointer" },
+        on: { click: _vm.markBestReply }
+      })
+    ])
   ])
 }
 var staticRenderFns = []
@@ -70317,6 +70323,22 @@ window.onload = function () {
 
 /***/ }),
 
+/***/ "./resources/js/authorizations.js":
+/*!****************************************!*\
+  !*** ./resources/js/authorizations.js ***!
+  \****************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+var user = window.App.user;
+module.exports = {
+  updateReply: function updateReply(reply) {
+    return reply.user_id === user.id;
+  }
+};
+
+/***/ }),
+
 /***/ "./resources/js/bootstrap.js":
 /*!***********************************!*\
   !*** ./resources/js/bootstrap.js ***!
@@ -70340,18 +70362,29 @@ try {
 
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 
-Vue.prototype.authorize = function (handler) {
-  var user = window.App.user; // user ? handler(user) : false;
+var authorizations = __webpack_require__(/*! ./authorizations */ "./resources/js/authorizations.js");
 
-  if (!user) return false;
-  return handler(user);
+Vue.prototype.authorize = function () {
+  if (!window.App.signedIn) return false;
+
+  for (var _len = arguments.length, params = new Array(_len), _key = 0; _key < _len; _key++) {
+    params[_key] = arguments[_key];
+  }
+
+  if (typeof params[0] === 'string') {
+    return authorizations[params[0]](params[1]);
+  }
+
+  return params[0](window.App.user); // if(!user) return false;
+  // return handler(user);
 };
+
+Vue.prototype.signedIn = window.App.signedIn;
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
-
 
 window.axios = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';

@@ -51,11 +51,6 @@ export default {
                 })
         }
     },
-    computed : {
-        signedIn() {
-            return window.App.signedIn;
-        }
-    }
 }
 </script>
 

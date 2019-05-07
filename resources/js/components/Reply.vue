@@ -6,7 +6,7 @@
                     <a :href="'/profile/' + data.owner.name" v-text="data.owner.name"></a> said <span v-text="ago"></span>
                 </h5>
 
-                    <div v-if="singedIn">
+                    <div v-if="signedIn">
                         <favorite :reply="data"></favorite>                    
                     </div>    
             </div>
@@ -26,9 +26,14 @@
             <div v-else v-html="body"></div>
         </div>
 
-            <div class="card-footer level" v-if="canUpdate">
-                <button class="btn btn-primary btn-sm mr-1" @click="editing = true">Edit</button>
-                <button class="btn btn-danger btn-sm mr-1" @click="destroy">Delete</button>
+            <div class="card-footer level" >
+                <div v-if="authorize('updateReply', reply)">
+                    <button class="btn btn-primary btn-sm mr-1" @click="editing = true">Edit</button>
+                    <button class="btn btn-danger btn-sm mr-1" @click="destroy">Delete</button>
+                </div>
+                
+                <i :class="classes"  @click="markBestReply" style="cursor:pointer"></i>
+
             </div>
     </div>
 </template>
@@ -47,19 +52,17 @@ export default {
             editing : false,
             id : this.data.id,
             body : this.data.body,
+            isBest : false,
+            reply : this.data,
         }
     },
     computed : {
         ago() {
             return moment(this.data.created_at).fromNow();
         },
-        singedIn() {
-            return window.App.signedIn;
+        classes() {
+            return ['fa-star mr-1 ml-auto', this.isBest ? 'fas text-success' : 'far']
         },
-        canUpdate() {
-            return this.authorize(user => this.data.user_id == user.id);
-            // return this.data.user_id == window.App.user.id;
-        }
     },
     methods : {
         update() {
@@ -75,7 +78,11 @@ export default {
 
             this.$emit('deleted' , this.data.id);
             
+        },
+        markBestReply() {
+            this.isBest = !this.isBest;
         }
+
     }
 }
 </script>
