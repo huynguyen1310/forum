@@ -3341,6 +3341,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -3503,7 +3508,7 @@ __webpack_require__.r(__webpack_exports__);
   props: ['active'],
   computed: {
     classes: function classes() {
-      return ['btn', this.active ? 'btn-primary' : 'btn-default'];
+      return ['btn', this.active ? 'btn-primary' : 'btn-dark'];
     }
   },
   methods: {
@@ -3586,11 +3591,18 @@ __webpack_require__.r(__webpack_exports__);
     Replies: _components_Replies__WEBPACK_IMPORTED_MODULE_0__["default"],
     SubscribeButton: _components_SubscribeButton__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  props: ['initialRepliesCount'],
+  props: ['thread'],
   data: function data() {
     return {
-      repliesCount: this.initialRepliesCount
+      repliesCount: this.thread.replies_count,
+      locked: this.thread.locked
     };
+  },
+  methods: {
+    toggleLock: function toggleLock() {
+      axios[this.locked ? 'delete' : 'post']('/locked-threads/' + this.thread.slug);
+      this.locked = !this.locked;
+    }
   }
 });
 
@@ -57912,7 +57924,13 @@ var render = function() {
         on: { updated: _vm.fetch }
       }),
       _vm._v(" "),
-      _c("NewReply", { on: { created: _vm.add } })
+      _vm.$parent.locked
+        ? _c("p", { staticClass: "mt-4" }, [
+            _vm._v(
+              "\n        This thread has been locked . No more replies are allowed.\n    "
+            )
+          ])
+        : _c("NewReply", { on: { created: _vm.add } })
     ],
     2
   )
@@ -70346,6 +70364,9 @@ module.exports = {
   owns: function owns(model) {
     var prop = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'user_id';
     return model[prop] === user.id;
+  },
+  isAdmin: function isAdmin() {
+    return ['HuyNguyen'].includes(user.name);
   }
 };
 
