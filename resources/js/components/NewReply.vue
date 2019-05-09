@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="form-group mt-4" v-if="signedIn">
-            <textarea name="body" id="body" class="form-control" placeholder="Have somethin to say ?" required v-model="body"></textarea>
+            <wysiwyg name="body" v-model="body" placeholder="Have somethin to say ?" :shouldClear="completed"></wysiwyg>
             <button class="btn btn-success mt-2" @click="addReply">Post</button>
         </div>
         
@@ -18,6 +18,7 @@ export default {
     data() {
         return {
             body : '',
+            completed : false
         }
     },
     mounted() {
@@ -44,6 +45,7 @@ export default {
                 })
                 .then(({data}) => {
                     this.body = '';
+                    this.completed = true;
 
                     flash('Your reply has been posted');
 

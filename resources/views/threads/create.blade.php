@@ -32,11 +32,7 @@
 
                         <div class="form-group">
                             <label for="body">Body</label>
-                            <textarea type="text" id="body" class="form-control" name="body" required></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <div class="g-recaptcha" data-sitekey="6LepdqIUAAAAACPeR5gj33EDMJmWbNFKRN4MUz_6"></div>
+                            <wysiwyg name="body"></wysiwyg>
                         </div>
 
                         <button class="btn btn-primary">Submit</button>

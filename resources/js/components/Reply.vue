@@ -16,7 +16,7 @@
             <div v-if="editing">
                 <form @submit="update">
                     <div class="form-group">
-                        <textarea name="body" id="" class="form-control" v-model="body" required></textarea>
+                        <wysiwyg name="body" v-model="body" placeholder="Have somethin to say ?" :shouldClear="completed"></wysiwyg>
 
                         <button class="btn btn-sm btn-link">Update</button>
                         <button class="btn btn-sm btn-link" @click="editing = false" type="button">Cancel</button>
