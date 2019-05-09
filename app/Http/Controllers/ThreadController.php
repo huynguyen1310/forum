@@ -52,7 +52,7 @@ class ThreadController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
+        request()->validate([
             'title' => 'required|spamfree',
             'body' => 'required|spamfree',
             'channel_id' => 'required|exists:channels,id'
@@ -95,7 +95,15 @@ class ThreadController extends Controller
 
     public function update($channel , Thread $thread)
     {
-        
+        $this->authorize('update',$thread);
+
+        $data = request()->validate([
+            'title' => 'required|spamfree',
+            'body' => 'required|spamfree',
+        ]);
+
+        $thread->update($data);
+
     }
 
     /**
