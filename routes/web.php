@@ -11,12 +11,8 @@ use App\Http\Controllers\ThreadController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
-
 Auth::routes();
+Route::get('/','ThreadController@index')->name('threads');
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/threads','ThreadController@index')->name('threads');
